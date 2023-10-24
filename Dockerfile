@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk as build
-RUN addgroup java; adduser --ingroup java --disabled-password java
+RUN addgroup java && adduser --ingroup java --disabled-password java
 USER java
 
 WORKDIR /app
@@ -24,9 +24,9 @@ RUN jlink \
     --output ./myjre
 
 FROM alpine:3.18.3
-ENV JAVA_HOME /user/java/jdk17
+ENV JAVA_HOME /usr/java/jdk17
 ENV PATH $JAVA_HOME/bin:$PATH
 COPY --from=build /app/myjre $JAVA_HOME
 WORKDIR /app
 COPY --from=build /app/target/java-modules-example-1.0.jar /app/
-ENTRYPOINT java -jar java-modules-example-1.0.jar
+ENTRYPOINT ["java", "-jar", "java-modules-example-1.0.jar"]
